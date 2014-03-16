@@ -6,7 +6,7 @@ simple interface.
 
 ## Installing the libraries (Linux)
 
-* Get the source code: `git clone https://github.com/sabel83/process && cd process`
+* Get the source code: `git clone https://github.com/sabel83/just && cd just`
 * Create the build directory: `mkdir bin && bin`
 * Generate the Makefiles: `cmake ..`
 * Build the tests: `make`

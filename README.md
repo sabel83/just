@@ -87,6 +87,6 @@ JUST_TEST_DEFINE_MAIN
 
 ## License
 
-Process is published under the
+The libraries are published under the
 [Boost Software License](http://www.boost.org/LICENSE_1_0.txt).
 

@@ -5,22 +5,66 @@
 
 #include "util.hpp"
 
+#include <sys/types.h>
+#include <dirent.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <cassert>
 
 namespace
 {
-  std::string create_temp_filename()
+  std::string create_temp_dir()
   {
-    char fn[] = "/tmp/process_XXXXXX";
-    return mktemp(fn);
+    char dn[] = "/tmp/process_XXXXXX";
+    assert(mkdtemp(dn));
+    return dn;
   }
+
+  void delete_dir(const std::string& path_)
+  {
+    if (DIR* d = opendir(path_.c_str()))
+    { // I assume that this will not throw (and closedir is called at the end)
+      while (dirent* e = readdir(d))
+      {
+        const std::string name = e->d_name;
+        if (name != "." && name != "..")
+        {
+          const std::string p = path_ + "/" + name;
+          if (e->d_type == DT_DIR)
+          {
+            delete_dir(p);
+          }
+          else
+          {
+            unlink(p.c_str());
+          }
+        }
+      }
+      closedir(d);
+
+      rmdir(path_.c_str());
+    }
+  }
+
+  const std::string temp_dir = create_temp_dir();
+
+  // It assumes that only temp_filename was created in the directory
+  struct delete_temp_dir_t
+  {
+    ~delete_temp_dir_t()
+    {
+      delete_dir(temp_dir);
+    }
+  };
+
+  delete_temp_dir_t delete_temp_dir;
 }
 
-const std::string temp_filename = create_temp_filename();
+const std::string temp_filename = temp_dir + "/foo";
 
 bool file_exists(const std::string& filename_)
 {

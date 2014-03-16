@@ -61,17 +61,17 @@ JUST_TEST_CASE(my_first_test_case)
 
 In the body you can use the following test assertions:
 
-* `JUST\_ASSERT(e)` Fails when `e` is false.
-* `JUST\_ASSERT\_EQUAL(a, b)` Checks if `a == b`.
-* `JUST\_ASSERT\_NOT\_EQUAL(a, b)` Checks if `a != b`.
-* `JUST\_ASSERT\_LESS(a, b)` Checks if `a < b`.
-* `JUST\_ASSERT\_LESS\_EQUAL(a, b)` Checks if `a <= b`.
-* `JUST\_ASSERT\_GREATER(a, b)` Checks if `a > b`.
-* `JUST\_ASSERT\_GREATER\_EQUAL(a, b)` Checks if `a >= b`.
-* `JUST\_ASSERT\_THROWS(e, t)` Checks if evaluating `e` throws an exception of
+* `JUST_ASSERT(e)` Fails when `e` is false.
+* `JUST_ASSERT_EQUAL(a, b)` Checks if `a == b`.
+* `JUST_ASSERT_NOT_EQUAL(a, b)` Checks if `a != b`.
+* `JUST_ASSERT_LESS(a, b)` Checks if `a < b`.
+* `JUST_ASSERT_LESS_EQUAL(a, b)` Checks if `a <= b`.
+* `JUST_ASSERT_GREATER(a, b)` Checks if `a > b`.
+* `JUST_ASSERT_GREATER\_EQUAL(a, b)` Checks if `a >= b`.
+* `JUST_ASSERT_THROWS(e, t)` Checks if evaluating `e` throws an exception of
   type `t`. `e` and `t` are macro arguments and all commas they contain should
   be in parentheses.
-* `JUST\_ASSERT\_THROWS\_SOMETHING(e)` Checks if evaluating `e` throws any
+* `JUST_ASSERT_THROWS_SOMETHING(e)` Checks if evaluating `e` throws any
   exception. `e` is a macro argument and all commas it contains should be in
   parentheses.
 

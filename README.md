@@ -1,5 +1,7 @@
 # Just
 
+[![Build Status](https://secure.travis-ci.org/sabel83/just.png?branch=master "Build Status")](http://travis-ci.org/sabel83/just)
+
 This is a collection of C++ libraries which are easy to get started with and
 use. They are header-only libraries, good for one specific thing and have a
 simple interface.

@@ -26,6 +26,7 @@ using namespace just::process;
 
 namespace
 {
+#ifdef _WIN32
   template <char C>
   void split(const std::string& s_, std::vector<std::string>& out_)
   {
@@ -51,13 +52,16 @@ namespace
       out_.push_back(std::string(from, e));
     }
   }
+#endif
 
+#ifdef _WIN32
   bool ends_with(const std::string& suffix_, const std::string& s_)
   {
     return
       suffix_.size() <= s_.size()
       && s_.substr(s_.size() - suffix_.size()) == suffix_;
   }
+#endif
 
 #ifndef _WIN32
   std::vector<std::string> run_in_shell(const std::string& cmd_)

@@ -107,7 +107,7 @@ In the body you can use the following test assertions:
 * `JUST_ASSERT_LESS(a, b)` Checks if `a < b`.
 * `JUST_ASSERT_LESS_EQUAL(a, b)` Checks if `a <= b`.
 * `JUST_ASSERT_GREATER(a, b)` Checks if `a > b`.
-* `JUST_ASSERT_GREATER\_EQUAL(a, b)` Checks if `a >= b`.
+* `JUST_ASSERT_GREATER_EQUAL(a, b)` Checks if `a >= b`.
 * `JUST_ASSERT_THROWS(e, t)` Checks if evaluating `e` throws an exception of
   type `t`. `e` and `t` are macro arguments and all commas they contain should
   be in parentheses.

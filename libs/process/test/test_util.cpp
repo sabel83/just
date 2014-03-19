@@ -7,9 +7,11 @@
 
 #include <just/test.hpp>
 
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
+#ifndef _WIN32
+#  include <sys/stat.h>
+#  include <fcntl.h>
+#  include <unistd.h>
+#endif
 
 JUST_TEST_CASE(test_existing_file_exists)
 {
@@ -24,14 +26,22 @@ JUST_TEST_CASE(test_non_existing_file_does_not_exist)
 
 JUST_TEST_CASE(test_open_file_descriptor_is_open)
 {
+#ifdef _WIN32
+  JUST_ASSERT(file_descriptor_is_open(GetStdHandle(STD_ERROR_HANDLE)));
+#else
   JUST_ASSERT(file_descriptor_is_open(0));
+#endif
 }
 
 JUST_TEST_CASE(test_closed_file_descriptor_is_not_open)
 {
   write_file(temp_filename, "foo");
-  const int fd = open(temp_filename.c_str(), O_RDONLY);
+  const just::process::impl::fd_t fd = open_read_only(temp_filename);
+#ifdef _WIN32
+  CloseHandle(fd);
+#else
   close(fd);
+#endif
 
   JUST_ASSERT(!file_descriptor_is_open(fd));
 }

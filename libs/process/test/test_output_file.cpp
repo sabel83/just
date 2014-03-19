@@ -21,7 +21,24 @@ using namespace just::process::impl;
 
 namespace
 {
-  int open_temp_file()
+#ifdef _WIN32
+  fd_t open_temp_file()
+  {
+    return
+      CreateFile(
+        temp_filename.c_str(),
+        GENERIC_WRITE,
+        0,
+        NULL,
+        CREATE_ALWAYS,
+        FILE_ATTRIBUTE_NORMAL,
+        NULL
+      );
+  }
+#endif
+
+#ifndef _WIN32
+  fd_t open_temp_file()
   {
     return
       open(
@@ -30,11 +47,12 @@ namespace
         S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
       );
   }
+#endif
 }
 
 JUST_TEST_CASE(test_destructor_closing_output_file)
 {
-  const int fd = open_temp_file();
+  const fd_t fd = open_temp_file();
   {
     output_file f(fd);
   }
@@ -44,15 +62,17 @@ JUST_TEST_CASE(test_destructor_closing_output_file)
 
 JUST_TEST_CASE(test_write_to_output_file)
 {
-  output_file f(open_temp_file());
-  f.write("hello", 5);
+  {
+    output_file f(open_temp_file());
+    f.write("hello", 5);
+  }
 
   JUST_ASSERT_EQUAL("hello", read_file(temp_filename));
 }
 
 JUST_TEST_CASE(test_close_output_file)
 {
-  const int fd = open_temp_file();
+  const fd_t fd = open_temp_file();
   output_file f(fd);
   f.close();
 

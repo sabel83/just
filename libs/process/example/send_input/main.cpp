@@ -11,11 +11,17 @@
 
 int main()
 {
+#ifdef _WIN32
+  const std::vector<std::string> cmd(1, "c:\\windows\\system32\\cmd.exe");
+#else
   const std::vector<std::string> cmd(1, "/bin/cat");
+#endif
 
-  const just::process::output o = just::process::run(cmd, "Hello World");
+  const just::process::output o =
+    just::process::run(cmd, "echo Hello World\r\n");
+
   std::cout
-    << "Recevied output:" << std::endl
+    << "Received output:" << std::endl
     << o.standard_output() << std::endl;
 }
 

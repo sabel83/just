@@ -23,8 +23,14 @@ void ls_path(const std::string& path_)
   using just::process::output;
   using just::process::run;
 
+#ifdef _WIN32
+  cout << "Running: dir " << path_ << endl;
+  const vector<string> cmd =
+    list_of<string>("c:\\windows\\system32\\cmd.exe")("/c")("dir")(path_);
+#else
   cout << "Running: /bin/ls " << path_ << endl;
   const vector<string> cmd = list_of<string>("/bin/ls")(path_);
+#endif
 
   const output o = run(cmd, "");
 
@@ -40,6 +46,6 @@ void ls_path(const std::string& path_)
 int main()
 {
   ls_path("/");
-  ls_path("/something_that_does_not_exist");
+  ls_path("c:\\");
 }
 

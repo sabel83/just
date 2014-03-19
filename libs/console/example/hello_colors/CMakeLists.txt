@@ -3,5 +3,6 @@
 #    (See accompanying file LICENSE_1_0.txt or copy at
 #          http://www.boost.org/LICENSE_1_0.txt)
 
-subdirs(test process console)
+aux_source_directory(. SOURCES)
+add_executable(hello_colors ${SOURCES})
 

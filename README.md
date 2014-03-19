@@ -15,6 +15,44 @@ simple interface.
 * Run the tests: `make test`
 * Copy the headers: `make install` (You may need to run this as `root`)
 
+## just::console
+
+This is a library for using colors on the terminal.
+
+### Usage
+
+You need to include the `<just/console.hpp>` header file which provides the
+`just::console::color` type and the following objects of type `color`:
+
+```cpp
+just::console::color::black
+just::console::color::red
+just::console::color::bright_red
+just::console::color::green
+just::console::color::bright_green
+just::console::color::yellow
+just::console::color::bright_yellow
+just::console::color::blue
+just::console::color::bright_blue
+just::console::color::magenta
+just::console::color::bright_magenta
+just::console::color::cyan
+just::console::color::bright_cyan
+just::console::color::gray
+just::console::color::white
+```
+
+The library provides the following two functions in the `just::console`
+namespace:
+
+```cpp
+void text_color(color c_);
+void reset();
+```
+
+`text_color` changes the color the console will display the text with.
+`reset` sets this color to the default text color of the console.
+
 ## just::process
 
 This is a library for running an external process and capturing its standard

@@ -6,15 +6,15 @@
 #include <just/console.hpp>
 #include <iostream>
 
-void show_color(console::color c_)
+void show_color(just::console::color c_)
 {
-  console::text_color(c_);
+  just::console::text_color(c_);
   std::cout << c_ << ' ';
 }
 
 int main()
 {
-  using console::color;
+  using just::console::color;
 
   std::cout << "Hello ";
 
@@ -22,7 +22,7 @@ int main()
   show_color(color::green);
   show_color(color::blue);
 
-  console::reset();
+  just::console::reset();
   std::cout << "World!" << std::endl;
 }
 

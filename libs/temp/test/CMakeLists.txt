@@ -3,5 +3,8 @@
 #    (See accompanying file LICENSE_1_0.txt or copy at
 #          http://www.boost.org/LICENSE_1_0.txt)
 
-subdirs(test process console temp)
+aux_source_directory(. SOURCES)
+add_executable(temp_test ${SOURCES})
+
+add_test(temp_unit_tests temp_test)
 

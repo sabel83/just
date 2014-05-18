@@ -78,6 +78,27 @@ The resulting `output` object contains the captured standard output and error
 which can be queried by calling its `standard_output` and `standard_error`
 methods.
 
+## just:temp
+
+Create a temporary directory.
+
+### Usage
+
+You need to include the `<just/temp.hpp>` header file which provides the
+`just::temp::directory` class. Each instance of this class creates a temporary
+directory. The destructor recursively deletes the content of the directory.
+
+Example:
+
+```cpp
+int main()
+{
+  just::temp::directory d;
+
+  std::cout << "The path of my temp directory is: " << d.path() << std::endl;
+}
+```
+
 ## just::test
 
 This is a unit testing library.

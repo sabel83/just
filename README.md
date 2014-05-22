@@ -78,7 +78,7 @@ The resulting `output` object contains the captured standard output and error
 which can be queried by calling its `standard_output` and `standard_error`
 methods.
 
-## just:temp
+## just::temp
 
 Create a temporary directory.
 

@@ -9,8 +9,12 @@
 #include <iostream>
 #include <fstream>
 
-#include <sys/types.h>
-#include <dirent.h>
+#ifdef _WIN32
+#  include <windows.h>
+#else
+#  include <sys/types.h>
+#  include <dirent.h>
+#endif
 
 using namespace just;
 
@@ -18,6 +22,11 @@ namespace
 {
   bool dir_exists(const std::string& path_)
   {
+#ifdef _WIN32
+    const DWORD attrs = GetFileAttributes(path_.c_str());
+    return
+      attrs != INVALID_FILE_ATTRIBUTES && (attrs & FILE_ATTRIBUTE_DIRECTORY);
+#else
     if (DIR* d = opendir(path_.c_str()))
     {
       closedir(d);
@@ -27,6 +36,7 @@ namespace
     {
       return false;
     }
+#endif
   }
 }
 
@@ -62,7 +72,7 @@ JUST_TEST_CASE(test_can_create_files_in_temp_dir)
   const std::string p = d.path() + "/test.txt";
   std::ofstream f(p.c_str());
 
-  JUST_ASSERT(f);
+  JUST_ASSERT(!f.fail());
 }
 
 JUST_TEST_CASE(test_non_empty_directory_is_deleted)

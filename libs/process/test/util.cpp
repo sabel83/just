@@ -110,7 +110,7 @@ const std::string temp_filename = temp_dir + "/foo";
 
 bool file_exists(const std::string& filename_)
 {
-  return std::ifstream(filename_.c_str());
+  return !std::ifstream(filename_.c_str()).fail();
 }
 
 bool file_descriptor_is_open(just::process::impl::fd_t fd_)

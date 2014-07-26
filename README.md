@@ -53,6 +53,45 @@ void reset();
 `text_color` changes the color the console will display the text with.
 `reset` sets this color to the default text color of the console.
 
+## just::environment
+
+This is a library for managing environment variables.
+
+### Usage
+
+The `set` function can be used to create or change environment variables:
+
+```cpp
+just::environment::set("FOO", "value of FOO");
+```
+
+The `get` function can be used to get the value of an environment variable:
+
+```cpp
+std::string foo = just::environment::get("FOO");
+```
+
+The `path_separator` function returns the string that can be used to separate
+the elements of `PATH` on the current system:
+
+```cpp
+void prepend_path(const std::string& item_)
+{
+  just::environment::set(
+    "PATH",
+     item_ + just::environment::path_separator() + just::environment::get("PATH")
+  );
+}
+```
+
+The library provides functions for appending and preprending elements to the
+`PATH` environment variable:
+
+```cpp
+just::environment::prepend_to_path("path_to_check_first");
+just::environment::append_to_path("path_to_check_last");
+```
+
 ## just::process
 
 This is a library for running an external process and capturing its standard

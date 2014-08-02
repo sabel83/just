@@ -37,6 +37,7 @@ namespace
     return result;
   }
 
+#ifdef _WIN32
   std::vector<std::string> list_of(
     const std::string& s1_,
     const std::string& s2_,
@@ -53,6 +54,7 @@ namespace
     result.push_back(s5_);
     return result;
   }
+#endif
 
 #ifdef _WIN32
   template <char C>

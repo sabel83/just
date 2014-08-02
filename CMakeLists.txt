@@ -12,9 +12,6 @@ set(MAJOR_VERSION 0)
 set(MINOR_VERSION 1)
 set(PATCH_VERSION 0)
 
-find_package(Boost)
-include_directories(${Boost_INCLUDE_DIR})
-
 enable_testing()
 
 include_directories("include")

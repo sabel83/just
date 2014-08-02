@@ -5,8 +5,6 @@
 
 #include <just/process.hpp>
 
-#include <boost/assign/list_of.hpp>
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -18,18 +16,20 @@ void ls_path(const std::string& path_)
   using std::vector;
   using std::string;
 
-  using boost::assign::list_of;
-
   using just::process::output;
   using just::process::run;
 
+  vector<string> cmd;
 #ifdef _WIN32
   cout << "Running: dir " << path_ << endl;
-  const vector<string> cmd =
-    list_of<string>("c:\\windows\\system32\\cmd.exe")("/c")("dir")(path_);
+  cmd.push_back("c:\\windows\\system32\\cmd.exe");
+  cmd.push_back("/c");
+  cmd.push_back("dir");
+  cmd.push_back(path_);
 #else
   cout << "Running: /bin/ls " << path_ << endl;
-  const vector<string> cmd = list_of<string>("/bin/ls")(path_);
+  cmd.push_back("/bin/ls");
+  cmd.push_back(path_);
 #endif
 
   const output o = run(cmd, "");

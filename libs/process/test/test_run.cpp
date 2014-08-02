@@ -8,8 +8,6 @@
 
 #include "util.hpp"
 
-#include <boost/assign/list_of.hpp>
-
 #include <vector>
 #include <string>
 
@@ -26,6 +24,36 @@ using namespace just::process;
 
 namespace
 {
+  std::vector<std::string> list_of(
+    const std::string& s1_,
+    const std::string& s2_,
+    const std::string& s3_
+  )
+  {
+    std::vector<std::string> result;
+    result.push_back(s1_);
+    result.push_back(s2_);
+    result.push_back(s3_);
+    return result;
+  }
+
+  std::vector<std::string> list_of(
+    const std::string& s1_,
+    const std::string& s2_,
+    const std::string& s3_,
+    const std::string& s4_,
+    const std::string& s5_
+  )
+  {
+    std::vector<std::string> result;
+    result.push_back(s1_);
+    result.push_back(s2_);
+    result.push_back(s3_);
+    result.push_back(s4_);
+    result.push_back(s5_);
+    return result;
+  }
+
 #ifdef _WIN32
   template <char C>
   void split(const std::string& s_, std::vector<std::string>& out_)
@@ -66,18 +94,14 @@ namespace
 #ifndef _WIN32
   std::vector<std::string> run_in_shell(const std::string& cmd_)
   {
-    using boost::assign::list_of;
-
-    return list_of<std::string>("/bin/bash")("-c")(cmd_);
+    return list_of("/bin/bash", "-c", cmd_);
   }
 #endif
 
 #ifdef _WIN32
   std::vector<std::string> run_in_shell(const std::string& cmd_)
   {
-    using boost::assign::list_of;
-
-    return list_of<std::string>("c:\\windows\\system32\\cmd.exe")("/c")(cmd_);
+    return list_of("c:\\windows\\system32\\cmd.exe", "/c", cmd_);
   }
 #endif
 }
@@ -86,7 +110,6 @@ JUST_TEST_CASE(test_command_is_executed)
 {
   using std::vector;
   using std::string;
-  using boost::assign::list_of;
 
   const vector<string> cmd = run_in_shell("echo hello > " + temp_filename);
 
@@ -104,7 +127,6 @@ JUST_TEST_CASE(test_output_of_command)
 {
   using std::vector;
   using std::string;
-  using boost::assign::list_of;
 
   const vector<string> cmd = run_in_shell("echo hello");
 
@@ -117,7 +139,6 @@ JUST_TEST_CASE(test_error_of_command)
 {
   using std::vector;
   using std::string;
-  using boost::assign::list_of;
 
   const vector<string> cmd = run_in_shell("echo hello 1>&2");
 
@@ -134,11 +155,10 @@ JUST_TEST_CASE(test_input_of_command)
 {
   using std::vector;
   using std::string;
-  using boost::assign::list_of;
 
 #ifdef _WIN32
-  const vector<string> cmd = list_of<string>
-    ("c:\\windows\\system32\\cmd.exe")("/q")("/d")("/k")("echo x");
+  const vector<string> cmd =
+    list_of("c:\\windows\\system32\\cmd.exe", "/q", "/d", "/k", "echo x");
 #else
   const vector<string> cmd(1, "/bin/cat");
 #endif

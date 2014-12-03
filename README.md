@@ -9,7 +9,7 @@ simple interface.
 ## Installing the libraries (Linux)
 
 * Get the source code: `git clone https://github.com/sabel83/just && cd just`
-* Create the build directory: `mkdir bin && bin`
+* Create the build directory: `mkdir bin && cd bin`
 * Generate the Makefiles: `cmake ..`
 * Build the tests: `make`
 * Run the tests: `make test`

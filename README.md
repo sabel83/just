@@ -162,7 +162,11 @@ JUST_TEST_CASE(my_first_test_case)
 In the body you can use the following test assertions:
 
 * `JUST_ASSERT(e)` Fails when `e` is false.
+* `JUST_ASSERT_EMPTY_CONTAINER(c)` Checks if `c.empty()`. Displays the content
+  of `c` (`[c.begin()..c.end())`) in the error report when it is not empty.
 * `JUST_ASSERT_EQUAL(a, b)` Checks if `a == b`.
+* `JUST_ASSERT_EQUAL_CONTAINER(a, b)`
+  Checks if `[a.begin()..a.end()) == [b.begin()..b.end())`.
 * `JUST_ASSERT_NOT_EQUAL(a, b)` Checks if `a != b`.
 * `JUST_ASSERT_LESS(a, b)` Checks if `a < b`.
 * `JUST_ASSERT_LESS_EQUAL(a, b)` Checks if `a <= b`.

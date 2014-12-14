@@ -3,5 +3,8 @@
 #    (See accompanying file LICENSE_1_0.txt or copy at
 #          http://www.boost.org/LICENSE_1_0.txt)
 
-subdirs(example test)
+aux_source_directory(. SOURCES)
+add_executable(test_test ${SOURCES})
+
+add_test(test_unit_tests test_test)
 

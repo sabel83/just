@@ -172,12 +172,21 @@ In the body you can use the following test assertions:
 * `JUST_ASSERT_LESS_EQUAL(a, b)` Checks if `a <= b`.
 * `JUST_ASSERT_GREATER(a, b)` Checks if `a > b`.
 * `JUST_ASSERT_GREATER_EQUAL(a, b)` Checks if `a >= b`.
-* `JUST_ASSERT_THROWS(e, t)` Checks if evaluating `e` throws an exception of
-  type `t`. `e` and `t` are macro arguments and all commas they contain should
-  be in parentheses.
-* `JUST_ASSERT_THROWS_SOMETHING(e)` Checks if evaluating `e` throws any
-  exception. `e` is a macro argument and all commas it contains should be in
-  parentheses.
+* `JUST_ASSERT_THROWS(f)` Checks if calling `f()` throws an exception.
+* `JUST_ASSERT_THROWS<t>(f)` Checks if calling `f()` throws an exception of type
+   `t` or a type derived from `t`.
+* `JUST_ASSERT_THROWS<t>(f).check_exception(g)` Checks if calling `f()` throws
+   an exception of type `t` or a type derived from `t`. When an exception was
+   thrown, it calls the `g` functor with the exception as its argument.
+   <br />
+   <br />
+   `.check_exception` can be repeated multiple times:
+   `JUST_ASSERT_THROWS<t>(f).check_exception(g).check_exception(h)`.
+   <br />
+   <br />
+   As the argument of `check_exception` the expression `JUST_WHAT_RETURNS(s)`
+   can be used which calls `.what()` on the exception object and checks if it
+   returns `s`.
 
 The test cases are automatically registered during initialisation. They are
 evaluated by the `just::test::run(argc, argv)` function, which takes `main`'s

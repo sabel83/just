@@ -179,15 +179,18 @@ JUST_TEST_CASE(test_input_of_command)
 #endif
 }
 
-JUST_TEST_CASE(test_invalid_command)
+namespace
 {
-  using std::vector;
-  using std::string;
-
-  const vector<string> cmd(1, "/some_invalid_command");
-
-  JUST_ASSERT_THROWS(just::process::exception, run(cmd, ""));
+  void test_invalid_command_f()
+  {
+    const std::vector<std::string> cmd(1, "/some_invalid_command");
+    
+    run(cmd, "");
+  }
 }
 
-
+JUST_TEST_CASE(test_invalid_command)
+{
+  JUST_ASSERT_THROWS<just::process::exception>(test_invalid_command_f);
+}
 

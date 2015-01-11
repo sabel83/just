@@ -17,7 +17,7 @@ int g()
 
 JUST_TEST_CASE(hello)
 {
-  JUST_ASSERT_THROWS_SOMETHING(f());
+  JUST_ASSERT_THROWS(f);
 }
 
 JUST_TEST_CASE(world)

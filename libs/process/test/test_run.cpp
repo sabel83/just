@@ -26,6 +26,17 @@ namespace
 {
   std::vector<std::string> list_of(
     const std::string& s1_,
+    const std::string& s2_
+  )
+  {
+    std::vector<std::string> result;
+    result.push_back(s1_);
+    result.push_back(s2_);
+    return result;
+  }
+
+  std::vector<std::string> list_of(
+    const std::string& s1_,
     const std::string& s2_,
     const std::string& s3_
   )
@@ -106,6 +117,21 @@ namespace
     return list_of("c:\\windows\\system32\\cmd.exe", "/c", cmd_);
   }
 #endif
+
+  std::string trim(const std::string& s_)
+  {
+    const std::string whitespace(" \t\r\n");
+    const size_t begin = s_.find_first_not_of(whitespace);
+    if (begin == std::string::npos)
+    {
+      return s_;
+    }
+    else
+    {
+      const size_t end = s_.find_last_not_of(whitespace);
+      return s_.substr(begin, end - begin + 1);
+    }
+  }
 }
 
 JUST_TEST_CASE(test_command_is_executed)
@@ -192,5 +218,29 @@ namespace
 JUST_TEST_CASE(test_invalid_command)
 {
   JUST_ASSERT_THROWS<just::process::exception>(test_invalid_command_f);
+}
+
+JUST_TEST_CASE(test_setting_cwd)
+{
+  using std::vector;
+  using std::string;
+
+#ifdef _WIN32
+  const vector<string> cmd = run_in_shell("chdir");
+  const vector<string> cwd = list_of("c:\\", "c:\\windows");
+#else
+  const vector<string> cmd(1, "/bin/pwd");
+  const vector<string> cwd = list_of("/", "/tmp");
+#endif
+
+  for (
+    vector<string>::const_iterator i = cwd.begin(), e = cwd.end();
+    i != e;
+    ++i
+  )
+  {
+    const output o = run(cmd, "", *i);
+    JUST_ASSERT_EQUAL(*i, trim(o.standard_output()));
+  }
 }
 

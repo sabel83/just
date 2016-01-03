@@ -112,7 +112,7 @@ namespace just
           );
       }
 #endif
-    
+
       /*
        * fd_t
        */
@@ -121,7 +121,7 @@ namespace just
 #else
         typedef int fd_t;
 #endif
-      
+
       inline fd_t invalid_fd()
       {
 #ifdef _WIN32
@@ -203,7 +203,7 @@ namespace just
           dup2(_fd, fd_);
         }
 #endif
-        
+
 #ifdef _WIN32
         fd_t copy_handle() const { return make_inheritable_copy(_fd); }
 #endif
@@ -379,14 +379,19 @@ namespace just
     class output
     {
     public:
-      output(const std::string& stdout_, const std::string& stderr_) :
+      output(
+        int exit_code_,
+        const std::string& stdout_, const std::string& stderr_) :
+        _exit_code(exit_code_),
         _out(stdout_),
         _err(stderr_)
       {}
 
+      int exit_code() const { return _exit_code; }
       const std::string& standard_output() const { return _out; }
       const std::string& standard_error() const { return _err; }
     private:
+      int _exit_code;
       std::string _out;
       std::string _err;
     };
@@ -458,7 +463,11 @@ namespace just
         WaitForSingleObject(h_std_err, INFINITE);
         WaitForSingleObject(pi.hProcess, INFINITE);
 
-        return output(std_out, std_err);
+        DWORD exit_code;
+        if (!GetExitCodeProcess(pi.hProcess, &exit_code)) {
+          throw exception("Can't get exit code");
+        }
+        return output(exit_code, std_out, std_err);
       }
       else
       {
@@ -488,39 +497,66 @@ namespace just
 #endif
 
 #ifndef _WIN32
+    inline std::string exit_reason(int status_)
+    {
+      if (WIFSIGNALED(status_))
+      {
+        std::ostringstream s;
+        s << "\nProcess died due to unhandled signal " << WTERMSIG(status_)
+          << ".";
+        return s.str();
+      }
+      else if (WCOREDUMP(status_))
+      {
+        return "\nProcess core dumped.";
+      }
+      else if (WIFSTOPPED(status_))
+      {
+        std::ostringstream s;
+        s << "\nProcess was stopped with signal " << WSTOPSIG(status_) << ".";
+        return s.str();
+      }
+      else
+      {
+        return "";
+      }
+    }
+#endif
+
+#ifndef _WIN32
     template <class Seq>
     output run(const Seq& cmd_, const std::string& input_)
     {
       using std::vector;
       using std::transform;
       using std::string;
-  
+
       assert(!cmd_.empty());
-  
+
       vector<const char*> cmd(cmd_.size() + 1, 0);
       transform(cmd_.begin(), cmd_.end(), cmd.begin(), impl::c_str);
-  
+
       impl::pipe standard_input;
       impl::pipe standard_output;
       impl::pipe standard_error;
       impl::pipe error_reporting;
-  
+
       const pid_t pid = fork();
       switch (pid)
       {
       case -1:
-        return output("", "");
+        return output(-1, "", "");
       case 0: // in child
         standard_input.output.close();
         standard_output.input.close();
         standard_error.input.close();
         error_reporting.input.close();
         error_reporting.output.close_on_exec();
-  
+
         standard_input.input.use_as(STDIN_FILENO);
         standard_output.output.use_as(STDOUT_FILENO);
         standard_error.output.use_as(STDERR_FILENO);
-  
+
         execv(cmd[0], const_cast<char*const*>(&cmd[0]));
         {
           const int err = errno;
@@ -542,20 +578,33 @@ namespace just
         standard_input.input.close();
         standard_input.output.write(input_);
         standard_input.output.close();
-  
+
         standard_output.output.close();
         standard_error.output.close();
-  
+
         error_reporting.output.close();
-  
+
+        //TODO
+        //pipe's buffer is (1 << 16), so we need to read from it multiple
+        //times while the process runs.
+        //This is hackish, since we don't care about stderr
+        std::string standard_output_string;
+        while (!standard_output.input.eof()) {
+          standard_output_string += standard_output.input.read();
+        }
+
         int status;
         waitpid(pid, &status, 0);
-  
+
         const std::string err = error_reporting.input.read();
         if (err.empty())
         {
           return
-            output(standard_output.input.read(), standard_error.input.read());
+            output(
+              WIFEXITED(status) ? WEXITSTATUS(status) : -1,
+              standard_output_string,
+              standard_error.input.read() + exit_reason(status)
+            );
         }
         else
         {

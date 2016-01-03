@@ -10,30 +10,29 @@ using namespace just::process;
 
 JUST_TEST_CASE(test_output_empty_stdout)
 {
-  output o("", "");
+  output o(0, "", "");
 
   JUST_ASSERT_EQUAL("", o.standard_output());
 }
 
 JUST_TEST_CASE(test_output_stdout)
 {
-  output o("normal", "");
+  output o(0, "normal", "");
 
   JUST_ASSERT_EQUAL("normal", o.standard_output());
 }
 
 JUST_TEST_CASE(test_output_empty_stderr)
 {
-  output o("", "");
+  output o(0, "", "");
 
   JUST_ASSERT_EQUAL("", o.standard_error());
 }
 
 JUST_TEST_CASE(test_output_stderr)
 {
-  output o("", "error");
+  output o(0, "", "error");
 
   JUST_ASSERT_EQUAL("error", o.standard_error());
 }
-
 

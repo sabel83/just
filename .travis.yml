@@ -2,8 +2,13 @@ language: cpp
 compiler:
   - gcc
   - clang
-before_install:
-  - sudo apt-get install libboost1.48-dev libboost-test1.48-dev
+addons:
+  apt:
+    sources:
+      - boost-latest
+    packages:
+      - libboost1.55-dev
+      - libboost-test1.55-dev
 script:
   - mkdir bin
   - cd bin

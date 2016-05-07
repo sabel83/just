@@ -92,6 +92,43 @@ just::environment::prepend_to_path("path_to_check_first");
 just::environment::append_to_path("path_to_check_last");
 ```
 
+## just::file
+
+This is a library for file input and output.
+
+### Usage
+
+The library provides functions to read/write entire files. Here are examples
+showing how to use these functions:
+
+```cpp
+const std::vector<char> content1{'h', 'e', 'l', 'l', 'o'};
+const std::std::string content2 = "world";
+
+just::file::write("foo.txt", content1);
+just::file::write("foo.txt", content2);
+just::file::write("foo.txt", "Hello World!");
+
+const std::vector<char> buff1 = just::file::read("foo.txt");
+
+std::vector<char> buff2;
+just::file::read("foo.txt", buff2);
+
+const std::string buff3 = just::file::read<std::string>("foo.txt");
+
+```
+
+The `just::file::write(<filename>, <content>)` function can be used to write a
+file. `<content>` can be a `std::string` or `std::vector<char>` value.
+
+The `just::file::read(<filename>)` function can be used to load the content of a
+file. It returns a `std::vector<char>` value. If you have a vector you'd like to
+read into, you can use `just::file::read(`
+
+```cpp
+just::environment::set("FOO", "value of FOO");
+```
+
 ## just::process
 
 This is a library for running an external process and capturing its standard

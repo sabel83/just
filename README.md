@@ -129,6 +129,65 @@ read into, you can use `just::file::read(`
 just::environment::set("FOO", "value of FOO");
 ```
 
+## just::lines
+
+This is a library for splitting a text into lines. Supports \r, \n and \r\n
+line endings.
+
+### Usage
+
+You need to include the `<just/lines.hpp>` header file which provides the
+`just::lines::iterator` template class. This is an iterator transformator
+transforming a forward iterator over characters into a forward iterator over the
+lines of the text. The library provides the `just::lines::begin_lines` and
+`just::lines::end_lines` helper functions to create the iterators. Here is an
+example usage:
+
+```cpp
+const std::string text = "hello\nworld!\r\n";
+
+for (
+  auto i = just::lines::begin_lines(text), e = just::lines::end_lines(text);
+  i != just::lines::end;
+  ++i
+)
+{
+  std::cout << *i << std::endl;
+}
+```
+
+The library offers convenience functions to split lines into a container:
+
+```cpp
+const std::string text = "hello\nworld!\r\n";
+
+std::list<std::string> lines1;
+just::lines::split(text, lines1);
+
+
+const std::vector<std::string> lines2 = just::lines::split(text);
+```
+
+The library offers the `basic_view` template class:
+
+```cpp
+const std::string text = "hello\nworld!\r\n";
+
+const just::lines::basic_view lines(text);
+for (const auto& line : lines)
+{
+  std::cout << line << std::endl;
+}
+
+for (const auto& line : just::lines::view_of(text))
+{
+  std::cout << line << std::endl;
+}
+```
+
+Note that `just::lines::view` is a type alias for
+`just::lines::basic_view<std::string>`
+
 ## just::process
 
 This is a library for running an external process and capturing its standard

@@ -171,6 +171,47 @@ namespace just
     {
       set("PATH", impl::append_to_path(item_, get("PATH")));
     }
+
+    class override_guard
+    {
+    public:
+      override_guard(const std::string& name_, const std::string& value_) :
+        _name(name_),
+        _old_value(get(name_)),
+        _existed(exists(name_))
+      {
+        set(name_, value_);
+      }
+
+      ~override_guard()
+      {
+        if (_existed)
+        {
+          set(_name, _old_value);
+        }
+        else
+        {
+          remove(_name);
+        }
+      }
+
+      const std::string& old_value() const
+      {
+        return _old_value;
+      }
+
+      bool existed() const
+      {
+        return _existed;
+      }
+    private:
+      std::string _name;
+      std::string _old_value;
+      bool _existed;
+
+      override_guard(const override_guard&); // = delete
+      override_guard& operator=(const override_guard&); // delete
+    };
   }
 }
 

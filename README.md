@@ -116,6 +116,19 @@ just::environment::prepend_to_path("path_to_check_first");
 just::environment::append_to_path("path_to_check_last");
 ```
 
+The library provides the `override_guard` class for temporary environment
+variable overrides. It sets the environment variable in the constructor and
+resets the original state in the destructor:
+
+```cpp
+const std::string old_path = just::environment::get("PATH");
+{
+  just::environment::override_guard g("PATH", "/");
+  assert("/" == just::environment::get("PATH"));
+}
+assert(old_path == just::environment::get("PATH"));
+```
+
 ## just::file
 
 This is a library for file input and output.

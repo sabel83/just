@@ -94,3 +94,31 @@ JUST_TEST_CASE(test_variable_existence)
   environment::remove(var);
   JUST_ASSERT(!environment::exists(var));
 }
+
+JUST_TEST_CASE(test_override_guard_for_existing_var)
+{
+  environment::set("FOO", "foo");
+  JUST_ASSERT_EQUAL("foo", environment::get("FOO"));
+  {
+    environment::override_guard g("FOO", "bar");
+
+    JUST_ASSERT_EQUAL("bar", environment::get("FOO"));
+    JUST_ASSERT(g.existed());
+    JUST_ASSERT_EQUAL("foo", g.old_value());
+  }
+  JUST_ASSERT_EQUAL("foo", environment::get("FOO"));
+}
+
+JUST_TEST_CASE(test_override_guard_for_non_existing_var)
+{
+  JUST_ASSERT(!environment::exists(var));
+  {
+    environment::override_guard g(var, "bar");
+
+    JUST_ASSERT(environment::exists(var));
+    JUST_ASSERT_EQUAL("bar", environment::get(var));
+    JUST_ASSERT(!g.existed());
+    JUST_ASSERT_EQUAL("", g.old_value());
+  }
+  JUST_ASSERT(!environment::exists(var));
+}

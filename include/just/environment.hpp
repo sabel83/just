@@ -79,6 +79,27 @@ namespace just
     }
 
 #ifdef _WIN32
+    inline bool exists(const std::string& name_)
+    {
+      if (GetEnvironmentVariable(name_.c_str(), NULL, 0) == 0)
+      {
+        return GetLastError() != ERROR_ENVVAR_NOT_FOUND;
+      }
+      else
+      {
+        return true;
+      }
+    }
+#endif
+
+#ifndef _WIN32
+    inline bool exists(const std::string& name_)
+    {
+      return getenv(name_.c_str()) != 0;
+    }
+#endif
+
+#ifdef _WIN32
     inline std::string get(const std::string& name_)
     {
       const DWORD len = impl::value_length(name_);
@@ -121,6 +142,23 @@ namespace just
       {
         throw std::runtime_error("Error setting " + name_ + "=" + value_);
       }
+    }
+#endif
+
+#ifdef _WIN32
+    inline void remove(const std::string& name_)
+    {
+      if (!SetEnvironmentVariable(name_.c_str(), NULL))
+      {
+        throw std::runtime_error("Error removing environment variable " + name_);
+      }
+    }
+#endif
+
+#ifndef _WIN32
+    inline void remove(const std::string& name_)
+    {
+      ::unsetenv(name_.c_str());
     }
 #endif
 

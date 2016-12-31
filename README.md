@@ -71,6 +71,30 @@ The `get` function can be used to get the value of an environment variable:
 std::string foo = just::environment::get("FOO");
 ```
 
+`get` returns an empty string for non-existing environment variables. The
+`exists` function can be used to check if the variable exists:
+
+```cpp
+boost::optional<std::string> get_env(const std::string& name_)
+{
+  if (just::environment::exists(name_))
+  {
+    return just::environment::get(name_);
+  }
+  else
+  {
+    return boost::none;
+  }
+}
+```
+
+The `remove` function can be used to remove an existing environment variable:
+
+```cpp
+just::environment::remove("PATH");
+assert(!just::environment::exists("PATH"));
+```
+
 The `path_separator` function returns the string that can be used to separate
 the elements of `PATH` on the current system:
 

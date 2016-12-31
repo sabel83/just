@@ -11,6 +11,7 @@ using namespace just;
 namespace
 {
   const std::string sep = environment::path_separator();
+  const std::string var = "HAVE_YOU_DEFINED_AN_ENV_VAR_WITH_THIS_NAME";
 }
 
 JUST_TEST_CASE(test_setting_environment_variable)
@@ -83,3 +84,13 @@ JUST_TEST_CASE(test_ends_with)
   JUST_ASSERT(!ends_with("ab", "a"));
 }
 
+JUST_TEST_CASE(test_variable_existence)
+{
+  JUST_ASSERT(!environment::exists(var));
+  environment::set(var, "yes I have");
+  JUST_ASSERT(environment::exists(var));
+  environment::set(var, "");
+  JUST_ASSERT(environment::exists(var));
+  environment::remove(var);
+  JUST_ASSERT(!environment::exists(var));
+}

@@ -116,7 +116,8 @@ bool file_exists(const std::string& filename_)
 bool file_descriptor_is_open(just::process::impl::fd_t fd_)
 {
 #ifdef _WIN32
-  return ReadFile(fd_, 0, 0, 0, 0) || WriteFile(fd_, 0, 0, 0, 0);
+  DWORD ignore;
+  return ReadFile(fd_, 0, 0, &ignore, 0) || WriteFile(fd_, 0, 0, 0, 0);
 #else
   std::ostringstream s;
   s << "/proc/self/fd/" << fd_;

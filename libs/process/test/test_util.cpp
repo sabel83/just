@@ -6,6 +6,7 @@
 #include "util.hpp"
 
 #include <just/test.hpp>
+#include <just/temp.hpp>
 
 #ifndef _WIN32
 #  include <sys/stat.h>
@@ -27,7 +28,24 @@ JUST_TEST_CASE(test_non_existing_file_does_not_exist)
 JUST_TEST_CASE(test_open_file_descriptor_is_open)
 {
 #ifdef _WIN32
-  JUST_ASSERT(file_descriptor_is_open(GetStdHandle(STD_ERROR_HANDLE)));
+  just::temp::directory d;
+  const std::string fn = d.path() + "\\test.txt";
+  const HANDLE f = CreateFile(
+    fn.c_str(),
+    GENERIC_READ | GENERIC_WRITE,
+    0,
+    NULL,
+    CREATE_ALWAYS,
+    FILE_ATTRIBUTE_NORMAL,
+    NULL
+  );
+  JUST_ASSERT(f != NULL);
+
+  const bool was_open = file_descriptor_is_open(f);
+
+  CloseHandle(f);
+
+  JUST_ASSERT(was_open);
 #else
   JUST_ASSERT(file_descriptor_is_open(0));
 #endif

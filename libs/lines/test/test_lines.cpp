@@ -189,6 +189,10 @@ JUST_TEST_CASE(test_split_lines)
     v("foo")("")("bar"),
     split_lines<false>("foo\r\n\nbar")
   );
+
+  JUST_ASSERT_EQUAL_CONTAINER(v("")(""), split_lines<false>("\n"));
+  JUST_ASSERT_EQUAL_CONTAINER(v("")(""), split_lines<false>("\r"));
+  JUST_ASSERT_EQUAL_CONTAINER(v("")(""), split_lines<false>("\r\n"));
 }
 
 JUST_TEST_CASE(test_split_lines_keeping_new_line)
@@ -254,4 +258,8 @@ JUST_TEST_CASE(test_split_lines_keeping_new_line)
     v("foo\r\n")("\n")("bar"),
     split_lines<true>("foo\r\n\nbar")
   );
+
+  JUST_ASSERT_EQUAL_CONTAINER(v("\n")(""), split_lines<true>("\n"));
+  JUST_ASSERT_EQUAL_CONTAINER(v("\r")(""), split_lines<true>("\r"));
+  JUST_ASSERT_EQUAL_CONTAINER(v("\r\n")(""), split_lines<true>("\r\n"));
 }

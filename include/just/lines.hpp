@@ -66,7 +66,14 @@ namespace just
       {
         if (_at != _end)
         {
-          ++(*this);
+          if (*_at != '\n')
+          {
+            ++(*this);
+          }
+          else if (KeepNewlines)
+          {
+            _current = "\n";
+          }
         }
       }
 

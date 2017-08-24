@@ -261,6 +261,31 @@ const std::vector<std::string>
 const just::lines::file_view lines7("foo/bar.txt");
 ```
 
+All of the above takes an extra `bool` template argument (which defaults to
+`false`) for keeping the newline characters at the end of the lines. The
+following example keeps the newline characters:
+
+```cpp
+const std::string text = "hello\nworld!\r\n";
+
+std::list<std::string> lines8;
+just::lines::split<true>(text, lines8);
+
+
+const std::vector<std::string> lines9 = just::lines::split<true>(text);
+
+const just::lines::basic_view<std::string, true> lines10(text);
+for (const auto& line : lines10)
+{
+  std::cout << line << std::endl;
+}
+
+for (const auto& line : just::lines::view_of<true>(text))
+{
+  std::cout << line << std::endl;
+}
+```
+
 ## just::process
 
 This is a library for running an external process and capturing its standard

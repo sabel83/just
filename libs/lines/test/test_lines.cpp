@@ -189,3 +189,68 @@ JUST_TEST_CASE(test_split_lines)
     split_lines<false>("foo\r\n\nbar")
   );
 }
+
+JUST_TEST_CASE(test_split_lines_keeping_new_line)
+{
+  typedef string_list_builder v;
+
+  JUST_ASSERT_EQUAL_CONTAINER(v(""), split_lines<true>(""));
+  JUST_ASSERT_EQUAL_CONTAINER(v("foo"), split_lines<true>("foo"));
+
+  JUST_ASSERT_EQUAL_CONTAINER(v("foo\n")("bar"), split_lines<true>("foo\nbar"));
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo\n")("\n")("bar"),
+    split_lines<true>("foo\n\nbar")
+  );
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo\n")("bar\n")(""),
+    split_lines<true>("foo\nbar\n")
+  );
+
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo\r")("bar"),
+    split_lines<true>("foo\rbar")
+  );
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo\r")("\r")("bar"),
+    split_lines<true>("foo\r\rbar")
+  );
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo\r")("bar\r")(""),
+    split_lines<true>("foo\rbar\r")
+  );
+
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo\r\n")("bar"),
+    split_lines<true>("foo\r\nbar")
+  );
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo\r\n")("\r\n")("bar"),
+    split_lines<true>("foo\r\n\r\nbar")
+  );
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo\r\n")("bar\r\n")(""),
+    split_lines<true>("foo\r\nbar\r\n")
+  );
+
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo\n")("\r")("bar"),
+    split_lines<true>("foo\n\rbar")
+  );
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo\n")("\r\n")("bar"),
+    split_lines<true>("foo\n\r\nbar")
+  );
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo\r")("\r\n")("bar"),
+    split_lines<true>("foo\r\r\nbar")
+  );
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo\r\n")("\r")("bar"),
+    split_lines<true>("foo\r\n\rbar")
+  );
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo\r\n")("\n")("bar"),
+    split_lines<true>("foo\r\n\nbar")
+  );
+}

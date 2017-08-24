@@ -108,13 +108,17 @@ namespace just
         {
           do
           {
-            if (*_at != '\r' && *_at != '\n')
+            if ((KeepNewlines || *_at != '\r') && *_at != '\n')
             {
               _current += *_at;
             }
             next_char();
           }
           while (_at != _end && *_at != '\n' && _last_char != '\r');
+          if (KeepNewlines && _at != _end && *_at == '\n')
+          {
+            _current += '\n';
+          }
         }
 
         return *this;

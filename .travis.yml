@@ -7,7 +7,7 @@ addons:
     sources:
       - boost-latest
       - ubuntu-toolchain-r-test
-      - llvm-toolchain-precise-5.0
+      - llvm-toolchain-trusty-5.0
     packages:
       - libboost1.55-dev
       - libboost-test1.55-dev

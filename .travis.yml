@@ -10,15 +10,4 @@ addons:
       - libboost1.55-dev
       - libboost-test1.55-dev
 script:
-  - mkdir bin
-  - cd bin
-  - cmake .. -DCMAKE_CXX_FLAGS:STRING="-std=c++0x"
-  - make
-  - make test || (cat Testing/Temporary/LastTest.log; false)
-  - cd ..
-  - rm -rf bin
-  - mkdir bin
-  - cd bin
-  - cmake ..
-  - make
-  - make test || (cat Testing/Temporary/LastTest.log; false)
+  - ./test.sh

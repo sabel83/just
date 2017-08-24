@@ -14,11 +14,11 @@ script:
   - cd bin
   - cmake .. -DCMAKE_CXX_FLAGS:STRING="-std=c++0x"
   - make
-  - make test
+  - make test || (cat Testing/Temporary/LastTest.log; false)
   - cd ..
   - rm -rf bin
   - mkdir bin
   - cd bin
   - cmake ..
   - make
-  - make test
+  - make test || (cat Testing/Temporary/LastTest.log; false)

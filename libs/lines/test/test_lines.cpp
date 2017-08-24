@@ -5,20 +5,94 @@
 
 #include <just/lines.hpp>
 #include <just/test.hpp>
+#include <just/temp.hpp>
+#include <just/file.hpp>
+
+#include <iterator>
+#include <algorithm>
+#include <sstream>
+#include <fstream>
 
 namespace
 {
+  template <class Container>
+  std::vector<std::string> create_vector(Container& c_)
+  {
+    std::vector<std::string> result;
+    std::copy(
+      c_.begin(),
+      c_.end(),
+      std::back_inserter(result)
+    );
+    return result;
+  }
+
+  template <class Container>
+  std::vector<std::string> create_vector(const Container& c_)
+  {
+    std::vector<std::string> result;
+    std::copy(
+      c_.begin(),
+      c_.end(),
+      std::back_inserter(result)
+    );
+    return result;
+  }
+
+  template <class T>
+  void converts_to(const T&) {}
+
   template <int N>
   std::vector<std::string> split_lines(const char (&s_)[N])
   {
     using std::vector;
     using std::string;
 
+    just::temp::directory tmp;
+    const std::string path = tmp.path() + "/test";
+    just::file::write(path, s_);
+
+    std::ifstream fs1(path.c_str());
+    std::ifstream fs2(path.c_str());
+    std::ifstream fs3(path.c_str());
+
+    std::istringstream s1(s_);
+    std::istringstream s2(s_);
+    std::istringstream s3(s_);
+
+    const just::lines::basic_view<string> view1(s_);
+    just::lines::basic_view<std::istream> view2(s1);
+    just::lines::basic_view<std::istream> view3(fs1);
+
+    just::lines::basic_view<std::istream> view4(s2);
+    just::lines::basic_view<std::istream> view5(fs2);
+    just::lines::file_view view6(path);
+
+    converts_to<just::lines::basic_view<std::istream> >(view6);
+
     const vector<string> v1 = just::lines::split(s_);
     const vector<string> v2 = just::lines::split(&(s_[0]));
     const vector<string> v3 = just::lines::split(string(s_));
+    const vector<string> v4 = just::lines::split(s3);
+    const vector<string> v5 = just::lines::split(fs3);
+    const vector<string> v6 = just::lines::split_lines_of_file(path);
+    const vector<string> v7 = create_vector(view1);
+    const vector<string> v8 = create_vector(view2);
+    const vector<string> v9 = create_vector(view3);
+    const vector<string> v10 = create_vector(view4);
+    const vector<string> v11 = create_vector(view5);
+    const vector<string> v12 = create_vector(view6);
     JUST_ASSERT_EQUAL_CONTAINER(v1, v2);
     JUST_ASSERT_EQUAL_CONTAINER(v2, v3);
+    JUST_ASSERT_EQUAL_CONTAINER(v3, v4);
+    JUST_ASSERT_EQUAL_CONTAINER(v4, v5);
+    JUST_ASSERT_EQUAL_CONTAINER(v5, v6);
+    JUST_ASSERT_EQUAL_CONTAINER(v6, v7);
+    JUST_ASSERT_EQUAL_CONTAINER(v7, v8);
+    JUST_ASSERT_EQUAL_CONTAINER(v8, v9);
+    JUST_ASSERT_EQUAL_CONTAINER(v9, v10);
+    JUST_ASSERT_EQUAL_CONTAINER(v10, v11);
+
     return v1;
   }
 

@@ -11,6 +11,8 @@
 #include <iterator>
 #include <cassert>
 #include <algorithm>
+#include <iosfwd>
+#include <fstream>
 
 namespace just
 {
@@ -36,6 +38,12 @@ namespace just
         }
         return s_;
       }
+
+      template <class T, class>
+      struct ignore_second
+      {
+        typedef T type;
+      };
     }
 
     template <class InputIt>
@@ -142,10 +150,25 @@ namespace just
       return iterator<typename String::const_iterator>(s_.begin(), s_.end());
     }
     
+    inline iterator<std::istream_iterator<char> > begin_lines(std::istream& s_)
+    {
+      s_ >> std::noskipws;
+      return
+        iterator<std::istream_iterator<char> >(
+          std::istream_iterator<char>(s_),
+          std::istream_iterator<char>()
+        );
+    }
+    
     template <class String>
     iterator<typename String::const_iterator> end_lines(const String&)
     {
       return iterator<typename String::const_iterator>();
+    }
+    
+    inline iterator<std::istream_iterator<char> > end_lines(std::istream& s_)
+    {
+      return iterator<std::istream_iterator<char> >();
     }
     
     template <class String>
@@ -176,16 +199,86 @@ namespace just
       const String* _string;
     };
 
+    template <>
+    class basic_view<std::istream>
+    {
+    public:
+      typedef lines::iterator<std::istream_iterator<char> > iterator;
+      typedef iterator const_iterator;
+
+      explicit basic_view(std::istream& stream_) : _stream(&stream_) {}
+
+      iterator begin()
+      {
+        return begin_lines(*_stream);
+      }
+
+      iterator end()
+      {
+        return end_lines(*_stream);
+      }
+
+      bool empty() const
+      {
+        // There is always at least one line
+        return false;
+      }
+    private:
+      std::istream* _stream;
+    };
+
     typedef basic_view<std::string> view;
 
+    class file_view
+    {
+    public:
+      typedef lines::iterator<std::istream_iterator<char> > iterator;
+      typedef iterator const_iterator;
+
+      explicit file_view(const std::string& path_) : _file(path_.c_str()) {}
+
+      iterator begin()
+      {
+        return begin_lines(_file);
+      }
+
+      iterator end()
+      {
+        return end_lines(_file);
+      }
+
+      bool empty() const
+      {
+        // There is always at least one line
+        return false;
+      }
+
+      operator basic_view<std::istream>()
+      {
+        return basic_view<std::istream>(_file);
+      }
+    private:
+      std::ifstream _file;
+    };
+
     template <class String>
-    basic_view<String> view_of(const String& s_)
+    typename impl::ignore_second<
+      basic_view<String>,
+      typename String::const_iterator
+    >::type
+    view_of(const String& s_)
     {
       return basic_view<String>(s_);
     }
 
+    inline basic_view<std::istream> view_of(std::istream& in_)
+    {
+      return basic_view<std::istream>(in_);
+    }
+
     template <class String, class Container>
-    void split(const String& s_, Container& out_)
+    typename impl::ignore_second<void, typename String::const_iterator>::type
+    split(const String& s_, Container& out_)
     {
       std::copy(begin_lines(s_), end_lines(s_), std::back_inserter(out_));
     }
@@ -200,8 +293,25 @@ namespace just
       );
     }
 
+    template <class Container>
+    void split(std::istream& in_, Container& out_)
+    {
+      std::copy(begin_lines(in_), end_lines(in_), std::back_inserter(out_));
+    }
+
+    template <class Container>
+    void split_lines_of_file(const std::string& path_, Container& out_)
+    {
+      std::ifstream f(path_.c_str());
+      split(f, out_);
+    }
+
     template <class String>
-    std::vector<String> split(const String& s_)
+    typename impl::ignore_second<
+      std::vector<String>,
+      typename String::const_iterator
+    >::type
+    split(const String& s_)
     {
       return std::vector<String>(begin_lines(s_), end_lines(s_));
     }
@@ -218,6 +328,23 @@ namespace just
           iterator<Char*>()
         );
     }
+
+    inline std::vector<std::string> split(std::istream& in_)
+    {
+      std::vector<std::string> result;
+      split(in_, result);
+      return result;
+    }
+
+    inline std::vector<std::string> split_lines_of_file(
+      const std::string& path_
+    )
+    {
+      std::vector<std::string> result;
+      split_lines_of_file(path_, result);
+      return result;
+    }
+
   }
 }
 

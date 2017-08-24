@@ -186,7 +186,7 @@ const std::string text = "hello\nworld!\r\n";
 
 for (
   auto i = just::lines::begin_lines(text), e = just::lines::end_lines(text);
-  i != just::lines::end;
+  i != e;
   ++i
 )
 {
@@ -211,7 +211,7 @@ The library offers the `basic_view` template class:
 ```cpp
 const std::string text = "hello\nworld!\r\n";
 
-const just::lines::basic_view lines(text);
+const just::lines::basic_view<std::string> lines(text);
 for (const auto& line : lines)
 {
   std::cout << line << std::endl;
@@ -225,6 +225,41 @@ for (const auto& line : just::lines::view_of(text))
 
 Note that `just::lines::view` is a type alias for
 `just::lines::basic_view<std::string>`
+
+The library can be used to split the lines of an input stream:
+
+```cpp
+std::istringstream s("hello\nworld!\r\n");
+
+for (
+  auto i = just::lines::begin_lines(s), e = just::lines::end_lines(s);
+  i != e;
+  ++i
+)
+{
+  std::cout << *i << std::endl;
+}
+
+std::list<std::string> lines3;
+just::lines::split(s, lines3);
+
+const std::vector<std::string> lines4 = just::lines::split(s);
+
+just::lines::basic_view<std::istream> lines5(s);
+const auto lines6 = just::lines::view_of(s);
+```
+
+The library can also be used to split the lines for the content of a file:
+
+```cpp
+std::list<std::string> lines5;
+just::lines::split_lines_of_file("foo/bar.txt", lines5);
+
+const std::vector<std::string>
+  lines6 = just::lines::split_lines_of_file("foo/bar.txt");
+
+const just::lines::file_view lines7("foo/bar.txt");
+```
 
 ## just::process
 

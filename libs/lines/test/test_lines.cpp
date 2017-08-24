@@ -60,7 +60,8 @@ namespace
     std::istringstream s2(s_);
     std::istringstream s3(s_);
 
-    const just::lines::basic_view<string, KeepNewlines> view1(s_);
+    const std::string str(s_);
+    const just::lines::basic_view<string, KeepNewlines> view1(str);
     just::lines::basic_view<std::istream, KeepNewlines> view2(s1);
     just::lines::basic_view<std::istream, KeepNewlines> view3(fs1);
 

@@ -203,7 +203,7 @@ namespace just
     {
       return iterator<std::istream_iterator<char>, KeepNewlines>();
     }
-    
+
     inline
     iterator<std::istream_iterator<char>, false>
     end_lines(std::istream& s_)
@@ -220,6 +220,7 @@ namespace just
       typedef iterator const_iterator;
 
       explicit basic_view(const String& string_) : _string(&string_) {}
+      // in c++11: explicit basic_view(String&&) = delete;
 
       iterator begin() const
       {
@@ -238,6 +239,9 @@ namespace just
       }
     private:
       const String* _string;
+
+      template <class OtherThanString>
+      explicit basic_view(const OtherThanString&); // = delete;
     };
 
     template <bool KeepNewlines>

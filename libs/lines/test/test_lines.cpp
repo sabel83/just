@@ -42,7 +42,7 @@ namespace
   template <class T>
   void converts_to(const T&) {}
 
-  template <int N>
+  template <bool KeepNewlines, int N>
   std::vector<std::string> split_lines(const char (&s_)[N])
   {
     using std::vector;
@@ -60,22 +60,23 @@ namespace
     std::istringstream s2(s_);
     std::istringstream s3(s_);
 
-    const just::lines::basic_view<string> view1(s_);
-    just::lines::basic_view<std::istream> view2(s1);
-    just::lines::basic_view<std::istream> view3(fs1);
+    const just::lines::basic_view<string, KeepNewlines> view1(s_);
+    just::lines::basic_view<std::istream, KeepNewlines> view2(s1);
+    just::lines::basic_view<std::istream, KeepNewlines> view3(fs1);
 
-    just::lines::basic_view<std::istream> view4(s2);
-    just::lines::basic_view<std::istream> view5(fs2);
-    just::lines::file_view view6(path);
+    just::lines::basic_view<std::istream, KeepNewlines> view4(s2);
+    just::lines::basic_view<std::istream, KeepNewlines> view5(fs2);
+    just::lines::basic_file_view<KeepNewlines> view6(path);
 
-    converts_to<just::lines::basic_view<std::istream> >(view6);
+    converts_to<just::lines::basic_view<std::istream, KeepNewlines> >(view6);
 
-    const vector<string> v1 = just::lines::split(s_);
-    const vector<string> v2 = just::lines::split(&(s_[0]));
-    const vector<string> v3 = just::lines::split(string(s_));
-    const vector<string> v4 = just::lines::split(s3);
-    const vector<string> v5 = just::lines::split(fs3);
-    const vector<string> v6 = just::lines::split_lines_of_file(path);
+    const vector<string> v1 = just::lines::split<KeepNewlines>(s_);
+    const vector<string> v2 = just::lines::split<KeepNewlines>(&(s_[0]));
+    const vector<string> v3 = just::lines::split<KeepNewlines>(string(s_));
+    const vector<string> v4 = just::lines::split<KeepNewlines>(s3);
+    const vector<string> v5 = just::lines::split<KeepNewlines>(fs3);
+    const vector<string> v6 =
+      just::lines::split_lines_of_file<KeepNewlines>(path);
     const vector<string> v7 = create_vector(view1);
     const vector<string> v8 = create_vector(view2);
     const vector<string> v9 = create_vector(view3);
@@ -128,31 +129,63 @@ JUST_TEST_CASE(test_split_lines)
 {
   typedef string_list_builder v;
 
-  JUST_ASSERT_EQUAL_CONTAINER(v(""), split_lines(""));
-  JUST_ASSERT_EQUAL_CONTAINER(v("foo"), split_lines("foo"));
+  JUST_ASSERT_EQUAL_CONTAINER(v(""), split_lines<false>(""));
+  JUST_ASSERT_EQUAL_CONTAINER(v("foo"), split_lines<false>("foo"));
 
-  JUST_ASSERT_EQUAL_CONTAINER(v("foo")("bar"), split_lines("foo\nbar"));
-  JUST_ASSERT_EQUAL_CONTAINER(v("foo")("")("bar"), split_lines("foo\n\nbar"));
-  JUST_ASSERT_EQUAL_CONTAINER(v("foo")("bar")(""), split_lines("foo\nbar\n"));
-
-  JUST_ASSERT_EQUAL_CONTAINER(v("foo")("bar"), split_lines("foo\rbar"));
-  JUST_ASSERT_EQUAL_CONTAINER(v("foo")("")("bar"), split_lines("foo\r\rbar"));
-  JUST_ASSERT_EQUAL_CONTAINER(v("foo")("bar")(""), split_lines("foo\rbar\r"));
-
-  JUST_ASSERT_EQUAL_CONTAINER(v("foo")("bar"), split_lines("foo\r\nbar"));
+  JUST_ASSERT_EQUAL_CONTAINER(v("foo")("bar"), split_lines<false>("foo\nbar"));
   JUST_ASSERT_EQUAL_CONTAINER(
     v("foo")("")("bar"),
-    split_lines("foo\r\n\r\nbar")
+    split_lines<false>("foo\n\nbar")
   );
   JUST_ASSERT_EQUAL_CONTAINER(
     v("foo")("bar")(""),
-    split_lines("foo\r\nbar\r\n")
+    split_lines<false>("foo\nbar\n")
   );
 
-  JUST_ASSERT_EQUAL_CONTAINER(v("foo")("")("bar"), split_lines("foo\n\rbar"));
-  JUST_ASSERT_EQUAL_CONTAINER(v("foo")("")("bar"), split_lines("foo\n\r\nbar"));
-  JUST_ASSERT_EQUAL_CONTAINER(v("foo")("")("bar"), split_lines("foo\r\r\nbar"));
-  JUST_ASSERT_EQUAL_CONTAINER(v("foo")("")("bar"), split_lines("foo\r\n\rbar"));
-  JUST_ASSERT_EQUAL_CONTAINER(v("foo")("")("bar"), split_lines("foo\r\n\nbar"));
-}
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo")("bar"),
+    split_lines<false>("foo\rbar")
+  );
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo")("")("bar"),
+    split_lines<false>("foo\r\rbar")
+  );
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo")("bar")(""),
+    split_lines<false>("foo\rbar\r")
+  );
 
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo")("bar"),
+    split_lines<false>("foo\r\nbar")
+  );
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo")("")("bar"),
+    split_lines<false>("foo\r\n\r\nbar")
+  );
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo")("bar")(""),
+    split_lines<false>("foo\r\nbar\r\n")
+  );
+
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo")("")("bar"),
+    split_lines<false>("foo\n\rbar")
+  );
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo")("")("bar"),
+    split_lines<false>("foo\n\r\nbar")
+  );
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo")("")("bar"),
+    split_lines<false>("foo\r\r\nbar")
+  );
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo")("")("bar"),
+    split_lines<false>("foo\r\n\rbar")
+  );
+  JUST_ASSERT_EQUAL_CONTAINER(
+    v("foo")("")("bar"),
+    split_lines<false>("foo\r\n\nbar")
+  );
+}

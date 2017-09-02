@@ -25,6 +25,20 @@ namespace
 
     return s3;
   }
+
+  class read_back_tester
+  {
+  public:
+    void operator()(const std::string& s_) const
+    {
+      const std::string filename = _tmp.path() + "/test.txt";
+
+      just::file::write(filename, s_);
+      JUST_ASSERT_EQUAL(s_, load_file(filename));
+    }
+  private:
+    just::temp::directory _tmp;
+  };
 }
 
 JUST_TEST_CASE(test_throws_when_fails_to_create_file)
@@ -42,22 +56,13 @@ JUST_TEST_CASE(test_throws_when_fails_to_create_file)
 
 JUST_TEST_CASE(test_read_back_content)
 {
-  just::temp::directory tmp;
+  read_back_tester test;
 
-  const std::string filename = tmp.path() + "/test.txt";
-
-  just::file::write(filename, "hello world");
-  JUST_ASSERT_EQUAL("hello world", load_file(filename));
-}
-
-JUST_TEST_CASE(test_read_back_empty_content)
-{
-  just::temp::directory tmp;
-
-  const std::string filename = tmp.path() + "/test.txt";
-
-  just::file::write(filename, "");
-  JUST_ASSERT_EQUAL("", load_file(filename));
+  test("");
+  test("hello world");
+  test("hello\nworld");
+  test("hello\rworld");
+  test("hello\r\nworld");
 }
 
 JUST_TEST_CASE(test_throws_when_fails_to_open_file_for_read)
@@ -72,4 +77,18 @@ JUST_TEST_CASE(test_throws_when_fails_to_open_file_for_read)
     // ignore
   }
 }
+
+JUST_TEST_CASE(test_throws_when_fails_to_open_file_for_write)
+{
+  try
+  {
+    just::file::write("/proc/cpuinfo/asd", "");
+    JUST_ASSERT(!"The above should have thrown");
+  }
+  catch (const just::file::error&)
+  {
+    // ignore
+  }
+}
+
 

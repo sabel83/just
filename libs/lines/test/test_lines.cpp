@@ -52,9 +52,9 @@ namespace
     const std::string path = tmp.path() + "/test";
     just::file::write(path, s_);
 
-    std::ifstream fs1(path.c_str());
-    std::ifstream fs2(path.c_str());
-    std::ifstream fs3(path.c_str());
+    std::ifstream fs1(path.c_str(), std::ios_base::binary | std::ios_base::in);
+    std::ifstream fs2(path.c_str(), std::ios_base::binary | std::ios_base::in);
+    std::ifstream fs3(path.c_str(), std::ios_base::binary | std::ios_base::in);
 
     std::istringstream s1(s_);
     std::istringstream s2(s_);

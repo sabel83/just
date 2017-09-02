@@ -291,7 +291,7 @@ namespace just
       typedef iterator const_iterator;
 
       explicit basic_file_view(const std::string& path_) :
-        _file(path_.c_str())
+        _file(path_.c_str(), std::ios_base::binary | std::ios_base::in)
       {}
 
       iterator begin()
@@ -404,7 +404,7 @@ namespace just
     template <bool KeepNewlines, class Container>
     void split_lines_of_file(const std::string& path_, Container& out_)
     {
-      std::ifstream f(path_.c_str());
+      std::ifstream f(path_.c_str(), std::ios_base::binary | std::ios_base::in);
       split<KeepNewlines>(f, out_);
     }
 
